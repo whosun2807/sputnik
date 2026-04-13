@@ -1,23 +1,12 @@
-#!/usr/bin/env python3
-"""
-Сервер для игры "Построй свой спутник!"
-Запуск: python server.py
-"""
-
 import os
 import json
 import urllib.request
 import urllib.error
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
-# ============================================================
-#  ВСТАВЬ СВОЙ API КЛЮЧ СЮДА
-# ============================================================
-ANTHROPIC_API_KEY = "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"
-# ============================================================
-
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
-PORT = 8080
+PORT = int(os.environ.get("PORT", 8080))
 
 
 class Handler(SimpleHTTPRequestHandler):
@@ -33,6 +22,10 @@ class Handler(SimpleHTTPRequestHandler):
             self.end_headers()
             return
 
+        if not ANTHROPIC_API_KEY:
+            self._json(500, {"error": "API ключ не настроен"})
+            return
+
         length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(length)
 
@@ -42,28 +35,27 @@ class Handler(SimpleHTTPRequestHandler):
             self._json(400, {"error": "Неверный JSON"})
             return
 
-        # Собираем промпт из ответов ребёнка
         answers = payload.get("answers", {})
+        sat_name = answers.get('4', 'Мой Спутник')
+
         prompt = f"""Ты — весёлый AI для детей 9–14 лет из Узбекистана. Ребёнок придумал спутник!
 Ответы:
 1. Миссия: {answers.get('0', '?')}
 2. Орбита: {answers.get('1', '?')}
-3. Форма: {answers.get('2', '?')}
+3. Цвет: {answers.get('2', '?')}
 4. Суперсила: {answers.get('3', '?')}
-5. Характер: {answers.get('4', '?')}
+5. Название: {sat_name}
 
 Верни ТОЛЬКО JSON без markdown и без лишних слов:
 {{
-  "name": "Название спутника (2-3 слова, звучит круто и по-космически, на русском)",
+  "name": "{sat_name}",
   "type": "Тип миссии (2-3 слова)",
-  "description": "3 предложения для ребёнка — весело, с восклицаниями! Что делает, чем уникален и почему это круто.",
+  "description": "3 предложения для ребёнка — весело с восклицаниями! Упомяни название спутника.",
   "orbit_height": "например 520 км",
   "speed": "например 27 600 км/ч",
   "weight": "например 120 кг",
   "cameras": "например 3 HD-камеры",
   "tags": ["тег1", "тег2", "тег3"],
-  "color1": "#hex яркий цвет корпуса",
-  "color2": "#hex контрастный цвет панелей",
   "shape": "cube или small или cylinder или hex"
 }}"""
 
@@ -104,7 +96,6 @@ class Handler(SimpleHTTPRequestHandler):
             self._json(500, {"error": str(e)})
 
     def do_GET(self):
-        # Отдаём index.html для всех GET запросов кроме /api/
         if self.path == "/" or self.path == "/index.html":
             self.path = "/index.html"
         super().do_GET()
@@ -128,18 +119,11 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    if ANTHROPIC_API_KEY.startswith("sk-ant-XXX"):
-        print("=" * 55)
-        print("  ВНИМАНИЕ: вставь API ключ в переменную")
-        print("  ANTHROPIC_API_KEY в файле server.py!")
-        print("=" * 55)
-
+    print(f"Запуск на 0.0.0.0:{PORT}")
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     server = HTTPServer(("0.0.0.0", PORT), Handler)
-    print(f"\n  Сервер запущен!")
-    print(f"  Открой в браузере: http://localhost:{PORT}")
-    print(f"  Для остановки нажми Ctrl+C\n")
+    print(f"Сервер запущен на порту {PORT}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\n  Сервер остановлен.")
+        print("Сервер остановлен.")
