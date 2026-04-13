@@ -13,7 +13,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 # ============================================================
 #  ВСТАВЬ СВОЙ API КЛЮЧ СЮДА
 # ============================================================
-ANTHROPIC_API_KEY = "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"
+ANTHROPIC_API_KEY = "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"
 # ============================================================
 
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
