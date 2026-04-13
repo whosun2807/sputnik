@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Построй свой спутник!</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #eef4ff; --purple: #7c5cbf; --purple-light: #ede8f8;
+  --yellow-light: #fff8d6; --pink: #ff6eb4; --teal: #00c6b8;
+  --orange: #ff8c42; --text: #2d2060; --text-soft: #7a6fa8;
+  --white: #ffffff; --shadow: 0 4px 20px rgba(124,92,191,0.13);
+}
+body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+.blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.18; animation: blobF 8s ease-in-out infinite; }
+.blob1 { width: 280px; height: 280px; background: #a78bfa; top: -70px; right: -70px; }
+.blob2 { width: 200px; height: 200px; background: #f472b6; bottom: 80px; left: -50px; animation-delay: 2s; }
+.blob3 { width: 150px; height: 150px; background: #34d399; top: 40%; right: -30px; animation-delay: 4s; }
+@keyframes blobF { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-18px) scale(1.04)} }
+.stars-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.star { position: absolute; animation: starA 6s linear infinite; opacity: 0.5; }
+@keyframes starA { 0%{transform:scale(1) rotate(0);opacity:0.3} 50%{transform:scale(1.3) rotate(180deg);opacity:0.7} 100%{transform:scale(1) rotate(360deg);opacity:0.3} }
+.wrap { position: relative; z-index: 1; max-width: 540px; margin: 0 auto; padding: 1.5rem 1.25rem 5rem; }
+.header { text-align: center; margin-bottom: 1.5rem; }
+.rocket { font-size: 3.5rem; display: block; animation: rocketB 2s ease-in-out infinite; margin-bottom: 0.5rem; }
+@keyframes rocketB { 0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-10px) rotate(5deg)} }
+.header h1 { font-size: 2rem; font-weight: 900; line-height: 1.2; }
+.header h1 em { color: var(--purple); font-style: normal; }
+.header p { margin-top: 0.4rem; font-size: 0.95rem; color: var(--text-soft); font-weight: 700; }
+.prog-row { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 1.5rem; }
+.pdot { width: 36px; height: 36px; border-radius: 50%; background: var(--white); border: 3px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 900; color: #ccc; transition: all 0.3s; flex-shrink: 0; }
+.pdot.active { background: var(--purple); border-color: var(--purple); color: white; transform: scale(1.2); box-shadow: 0 4px 12px rgba(124,92,191,0.4); }
+.pdot.done { background: var(--teal); border-color: var(--teal); color: white; }
+.pline { width: 18px; height: 3px; background: #e0e0e0; border-radius: 99px; transition: background 0.3s; flex-shrink: 0; }
+.pline.done { background: var(--teal); }
+.screen { display: none; }
+.screen.active { display: block; animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes popIn { from{opacity:0;transform:scale(0.93) translateY(14px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.card { background: var(--white); border-radius: 24px; padding: 1.75rem 1.5rem; box-shadow: var(--shadow); }
+.q-badge { display: inline-flex; align-items: center; gap: 5px; background: var(--purple-light); color: var(--purple); padding: 0.28rem 0.85rem; border-radius: 99px; font-size: 0.78rem; font-weight: 800; margin-bottom: 0.8rem; }
+.q-title { font-size: 1.45rem; font-weight: 900; color: var(--text); line-height: 1.25; margin-bottom: 0.3rem; }
+.q-hint { font-size: 0.88rem; color: var(--text-soft); font-weight: 700; margin-bottom: 1.2rem; }
+.opts { display: flex; flex-direction: column; gap: 0.6rem; }
+.opt { display: flex; align-items: center; gap: 0.85rem; padding: 0.85rem 1rem; background: #fafafa; border: 2.5px solid #eee; border-radius: 16px; cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); user-select: none; }
+.opt:hover { border-color: var(--purple); background: var(--purple-light); transform: scale(1.02); }
+.opt.sel { border-color: var(--purple); background: var(--purple-light); transform: scale(1.02); box-shadow: 0 4px 14px rgba(124,92,191,0.18); }
+.opt-ico { font-size: 1.9rem; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: var(--white); border-radius: 13px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transition: transform 0.2s; }
+.opt.sel .opt-ico { transform: scale(1.15) rotate(-6deg); }
+.opt-txt strong { display: block; font-size: 0.98rem; font-weight: 900; color: var(--text); margin-bottom: 0.12rem; }
+.opt-txt span { font-size: 0.78rem; color: var(--text-soft); font-weight: 700; }
+.btn { display: block; width: 100%; margin-top: 1.2rem; padding: 1rem 1.5rem; background: var(--purple); color: white; border: none; border-radius: 16px; font-family: 'Nunito', sans-serif; font-size: 1.05rem; font-weight: 900; cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+.btn:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(124,92,191,0.32); }
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.32; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-back { background: transparent; color: var(--text-soft); border: 2px solid #e5e5e5; margin-top: 0.55rem; font-size: 0.93rem; }
+.btn-back:hover { background: #f5f5f5; box-shadow: none; color: var(--text); }
+.gen-card { background: var(--white); border-radius: 24px; padding: 3rem 1.5rem; text-align: center; box-shadow: var(--shadow); }
+.gen-ico { font-size: 5rem; display: block; margin: 0 auto 1rem; animation: genSpin 2s ease-in-out infinite; }
+@keyframes genSpin { 0%,100%{transform:scale(1) rotate(-3deg)} 50%{transform:scale(1.08) rotate(3deg)} }
+.gen-title { font-size: 1.35rem; font-weight: 900; color: var(--text); margin-bottom: 0.4rem; }
+.gen-sub { color: var(--text-soft); font-size: 0.9rem; font-weight: 700; margin-bottom: 1.4rem; }
+.dots { display: flex; gap: 8px; justify-content: center; }
+.dots span { width: 12px; height: 12px; border-radius: 50%; animation: dotB 1s infinite; }
+.dots span:nth-child(1){ background: var(--purple); }
+.dots span:nth-child(2){ background: var(--pink); animation-delay: 0.15s; }
+.dots span:nth-child(3){ background: var(--teal); animation-delay: 0.3s; }
+@keyframes dotB { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.res-congrats { display: inline-block; background: var(--yellow-light); color: #a07b00; padding: 0.3rem 1rem; border-radius: 99px; font-size: 0.82rem; font-weight: 800; margin-bottom: 0.75rem; }
+.sat-vis { text-align: center; margin: 0.75rem 0 1rem; }
+.sat-svg-wrap { display: inline-block; animation: satF 3.5s ease-in-out infinite; filter: drop-shadow(0 8px 18px rgba(124,92,191,0.18)); }
+@keyframes satF { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-12px) rotate(2deg)} }
+.sat-name { font-size: 1.75rem; font-weight: 900; color: var(--text); text-align: center; margin-bottom: 0.2rem; }
+.sat-type { display: inline-block; background: var(--purple-light); color: var(--purple); padding: 0.28rem 0.9rem; border-radius: 99px; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1rem; }
+.sat-desc { font-size: 0.93rem; line-height: 1.65; color: var(--text-soft); font-weight: 700; background: var(--bg); border-radius: 14px; padding: 0.95rem 1.1rem; margin-bottom: 1rem; }
+.specs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.55rem; margin-bottom: 1rem; }
+.spec { background: var(--bg); border-radius: 13px; padding: 0.7rem 0.9rem; border: 2px solid #e8e8f0; }
+.spec-lbl { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-soft); font-weight: 800; margin-bottom: 0.2rem; }
+.spec-val { font-size: 0.88rem; font-weight: 900; color: var(--text); }
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.5rem; }
+.tag { padding: 0.28rem 0.75rem; border-radius: 99px; font-size: 0.76rem; font-weight: 800; }
+.btn-restart { background: linear-gradient(135deg, var(--pink), var(--orange)); margin-top: 1.2rem; }
+.btn-restart:hover { box-shadow: 0 6px 20px rgba(255,110,180,0.3); }
+.err-box { background: #fff0f0; border: 2px solid #fcc; border-radius: 13px; padding: 0.9rem 1rem; text-align: center; color: #c0392b; font-size: 0.85rem; font-weight: 700; margin-top: 0.75rem; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+<div class="stars-bg" id="starsWrap"></div>
+<div class="wrap">
+
+  <div class="header">
+    <span class="rocket">&#128640;</span>
+    <h1>Построй свой<br><em>спутник!</em></h1>
+    <p>5 вопросов — и AI создаст твой<br>космический аппарат &#127775;</p>
+  </div>
+
+  <div class="prog-row">
+    <div class="pdot active" id="d0">1</div><div class="pline" id="l0"></div>
+    <div class="pdot" id="d1">2</div><div class="pline" id="l1"></div>
+    <div class="pdot" id="d2">3</div><div class="pline" id="l2"></div>
+    <div class="pdot" id="d3">4</div><div class="pline" id="l3"></div>
+    <div class="pdot" id="d4">5</div>
+  </div>
+
+  <!-- Q1 -->
+  <div id="s0" class="screen active"><div class="card">
+    <div class="q-badge">&#127760; Вопрос 1 из 5</div>
+    <div class="q-title">Для чего твой спутник?</div>
+    <div class="q-hint">Выбери главную суперсилу!</div>
+    <div class="opts">
+      <div class="opt" data-q="0" data-v="наблюдение за Землёй, лесами, реками и экологией" onclick="pick(this)"><div class="opt-ico">&#127759;</div><div class="opt-txt"><strong>Смотреть за Землёй</strong><span>Снимать леса, реки и города сверху</span></div></div>
+      <div class="opt" data-q="0" data-v="GPS навигация — помогать людям не теряться" onclick="pick(this)"><div class="opt-ico">&#128506;</div><div class="opt-txt"><strong>Навигация и GPS</strong><span>Помогать всем находить дорогу</span></div></div>
+      <div class="opt" data-q="0" data-v="связь и интернет для всей планеты" onclick="pick(this)"><div class="opt-ico">&#128225;</div><div class="opt-txt"><strong>Связь и интернет</strong><span>Дать интернет всем на Земле</span></div></div>
+      <div class="opt" data-q="0" data-v="изучение космоса, звёзд и далёких планет" onclick="pick(this)"><div class="opt-ico">&#10024;</div><div class="opt-txt"><strong>Изучать звёзды</strong><span>Смотреть на далёкие галактики</span></div></div>
+    </div>
+    <button class="btn" id="b0" disabled onclick="go(0)">Вперёд! &#128640;</button>
+  </div></div>
+
+  <!-- Q2 -->
+  <div id="s1" class="screen"><div class="card">
+    <div class="q-badge">&#127775; Вопрос 2 из 5</div>
+    <div class="q-title">На какой высоте летишь?</div>
+    <div class="q-hint">Чем выше — тем больше видно!</div>
+    <div class="opts">
+      <div class="opt" data-q="1" data-v="низкая орбита 400-600 км, близко к Земле" onclick="pick(this)"><div class="opt-ico">&#127968;</div><div class="opt-txt"><strong>Низкая орбита</strong><span>400–600 км. Совсем близко к Земле!</span></div></div>
+      <div class="opt" data-q="1" data-v="средняя орбита 20000 км, для навигации" onclick="pick(this)"><div class="opt-ico">&#9992;</div><div class="opt-txt"><strong>Средняя орбита</strong><span>20 000 км. Идеально для GPS</span></div></div>
+      <div class="opt" data-q="1" data-v="геостационарная орбита 36000 км, висит над одной точкой" onclick="pick(this)"><div class="opt-ico">&#11088;</div><div class="opt-txt"><strong>Геостационарная</strong><span>36 000 км. Висит над одним местом!</span></div></div>
+    </div>
+    <button class="btn" id="b1" disabled onclick="go(1)">Вперёд! &#128640;</button>
+    <button class="btn btn-back" onclick="bk(1)">&#8592; Назад</button>
+  </div></div>
+
+  <!-- Q3 -->
+  <div id="s2" class="screen"><div class="card">
+    <div class="q-badge">&#9881; Вопрос 3 из 5</div>
+    <div class="q-title">Как он выглядит?</div>
+    <div class="q-hint">Выбери крутой дизайн!</div>
+    <div class="opts">
+      <div class="opt" data-q="2" data-v="классический куб с большими солнечными панелями" onclick="pick(this)"><div class="opt-ico">&#9632;</div><div class="opt-txt"><strong>Классический куб</strong><span>Большие солнечные панели — надёжный!</span></div></div>
+      <div class="opt" data-q="2" data-v="маленький КубСат размером с коробку обуви" onclick="pick(this)"><div class="opt-ico">&#128230;</div><div class="opt-txt"><strong>Малыш КубСат</strong><span>Маленький как коробка, но очень умный!</span></div></div>
+      <div class="opt" data-q="2" data-v="цилиндр с большой антенной-тарелкой" onclick="pick(this)"><div class="opt-ico">&#128251;</div><div class="opt-txt"><strong>Цилиндр с антенной</strong><span>Большая тарелка для связи с Землёй</span></div></div>
+      <div class="opt" data-q="2" data-v="футуристический шестиугольный корпус" onclick="pick(this)"><div class="opt-ico">&#11042;</div><div class="opt-txt"><strong>Супер-футуристик!</strong><span>Шестиугольный, блестящий, из будущего</span></div></div>
+    </div>
+    <button class="btn" id="b2" disabled onclick="go(2)">Вперёд! &#128640;</button>
+    <button class="btn btn-back" onclick="bk(2)">&#8592; Назад</button>
+  </div></div>
+
+  <!-- Q4 -->
+  <div id="s3" class="screen"><div class="card">
+    <div class="q-badge">&#128293; Вопрос 4 из 5</div>
+    <div class="q-title">Какая у него суперсила?</div>
+    <div class="q-hint">Каждый спутник умеет что-то особенное!</div>
+    <div class="opts">
+      <div class="opt" data-q="3" data-v="видит сквозь облака и туман с помощью радара" onclick="pick(this)"><div class="opt-ico">&#128065;</div><div class="opt-txt"><strong>Видит сквозь облака!</strong><span>Радар пробивает любой туман и тучи</span></div></div>
+      <div class="opt" data-q="3" data-v="слышит сигналы со всей Земли" onclick="pick(this)"><div class="opt-ico">&#128251;</div><div class="opt-txt"><strong>Огромное ухо!</strong><span>Слышит сигналы с любой точки планеты</span></div></div>
+      <div class="opt" data-q="3" data-v="видит в темноте и чувствует тепло" onclick="pick(this)"><div class="opt-ico">&#127762;</div><div class="opt-txt"><strong>Ночное зрение!</strong><span>Видит в темноте и чувствует тепло</span></div></div>
+      <div class="opt" data-q="3" data-v="управляет группой других спутников" onclick="pick(this)"><div class="opt-ico">&#128081;</div><div class="opt-txt"><strong>Командир флота!</strong><span>Управляет целой группой спутников</span></div></div>
+    </div>
+    <button class="btn" id="b3" disabled onclick="go(3)">Вперёд! &#128640;</button>
+    <button class="btn btn-back" onclick="bk(3)">&#8592; Назад</button>
+  </div></div>
+
+  <!-- Q5 -->
+  <div id="s4" class="screen"><div class="card">
+    <div class="q-badge">&#127881; Вопрос 5 из 5</div>
+    <div class="q-title">Какой он по характеру?</div>
+    <div class="q-hint">Последний вопрос — и поехали в космос!</div>
+    <div class="opts">
+      <div class="opt" data-q="4" data-v="смелый и быстрый — мчится быстрее всех" onclick="pick(this)"><div class="opt-ico">&#9889;</div><div class="opt-txt"><strong>Смелый и быстрый!</strong><span>Мчится быстрее всех на орбите</span></div></div>
+      <div class="opt" data-q="4" data-v="умный и терпеливый — собирает данные годами" onclick="pick(this)"><div class="opt-ico">&#129504;</div><div class="opt-txt"><strong>Умный и терпеливый</strong><span>Собирает данные годами без остановки</span></div></div>
+      <div class="opt" data-q="4" data-v="дружелюбный — помогает людям каждый день" onclick="pick(this)"><div class="opt-ico">&#128149;</div><div class="opt-txt"><strong>Дружелюбный!</strong><span>Каждый день помогает миллионам людей</span></div></div>
+      <div class="opt" data-q="4" data-v="загадочный — работает в тишине и хранит секреты" onclick="pick(this)"><div class="opt-ico">&#10024;</div><div class="opt-txt"><strong>Загадочный и крутой</strong><span>Работает в тишине и хранит секреты</span></div></div>
+    </div>
+    <button class="btn" id="b4" disabled onclick="go(4)">&#127775; Создать мой спутник!</button>
+    <button class="btn btn-back" onclick="bk(4)">&#8592; Назад</button>
+  </div></div>
+
+  <!-- Generating -->
+  <div id="sGen" class="screen">
+    <div class="gen-card">
+      <span class="gen-ico">&#128752;</span>
+      <div class="gen-title">AI строит твой спутник...</div>
+      <div class="gen-sub">Придумываем название и миссию &#10024;</div>
+      <div class="dots"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div id="sRes" class="screen">
+    <div class="card">
+      <div style="text-align:center"><span class="res-congrats">&#127881; Вот твой спутник!</span></div>
+      <div class="sat-vis"><div class="sat-svg-wrap" id="satSvg"></div></div>
+      <div style="text-align:center">
+        <div class="sat-name" id="satName"></div>
+        <span class="sat-type" id="satType"></span>
+      </div>
+      <div class="sat-desc" id="satDesc"></div>
+      <div class="specs" id="satSpecs"></div>
+      <div class="tags" id="satTags"></div>
+    </div>
+    <div id="errBox"></div>
+    <button class="btn btn-restart" onclick="reset()">&#128260; Попробовать снова!</button>
+  </div>
+
+</div>
+<script>
+const ans = {};
+const TOTAL = 5;
+
+(function(){
+  const w=document.getElementById('starsWrap');
+  const em=['&#11088;','&#10024;','&#127775;','&#9734;','&#128171;'];
+  for(let i=0;i<14;i++){
+    const s=document.createElement('span');
+    s.className='star';
+    s.innerHTML=em[i%em.length];
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*4}s;font-size:${13+Math.random()*13}px`;
+    w.appendChild(s);
+  }
+})();
+
+function pick(el){
+  const q=el.dataset.q;
+  document.querySelectorAll(`[data-q="${q}"]`).forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  ans[q]=el.dataset.v;
+  const b=document.getElementById('b'+q);
+  if(b) b.disabled=false;
+}
+
+function go(q){
+  document.getElementById('s'+q).classList.remove('active');
+  const d=document.getElementById('d'+q);
+  d.classList.remove('active'); d.classList.add('done'); d.innerHTML='&#10003;';
+  const l=document.getElementById('l'+q); if(l) l.classList.add('done');
+  if(q<TOTAL-1){
+    document.getElementById('s'+(q+1)).classList.add('active');
+    document.getElementById('d'+(q+1)).classList.add('active');
+  } else {
+    document.getElementById('sGen').classList.add('active');
+    generate();
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function bk(q){
+  document.getElementById('s'+q).classList.remove('active');
+  document.getElementById('s'+(q-1)).classList.add('active');
+  const d=document.getElementById('d'+q); d.classList.remove('active');
+  const p=document.getElementById('d'+(q-1)); p.classList.remove('done'); p.classList.add('active'); p.innerHTML=q;
+  const l=document.getElementById('l'+(q-1)); if(l) l.classList.remove('done');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function reset(){
+  Object.keys(ans).forEach(k=>delete ans[k]);
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  for(let i=0;i<TOTAL;i++){
+    const b=document.getElementById('b'+i); if(b) b.disabled=true;
+    const d=document.getElementById('d'+i); d.classList.remove('done','active'); d.innerHTML=i+1;
+    const l=document.getElementById('l'+i); if(l) l.classList.remove('done');
+  }
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('d0').classList.add('active');
+  document.getElementById('s0').classList.add('active');
+  document.getElementById('errBox').innerHTML='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function svgShape(shape,c1,c2){
+  const s={
+    cube:`<svg width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><rect x="55" y="60" width="80" height="75" rx="12" fill="${c1}"/><rect x="62" y="67" width="66" height="61" rx="8" fill="${c1}" opacity="0.55"/><line x1="62" y1="97" x2="128" y2="97" stroke="white" stroke-width="1.5" opacity="0.35"/><line x1="95" y1="67" x2="95" y2="128" stroke="white" stroke-width="1.5" opacity="0.35"/><rect x="5" y="82" width="50" height="32" rx="8" fill="${c2}"/><rect x="135" y="82" width="50" height="32" rx="8" fill="${c2}"/><rect x="9" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="21" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="33" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="139" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="151" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="163" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><circle cx="95" cy="97" r="10" fill="${c2}"/><circle cx="95" cy="97" r="5" fill="white" opacity="0.8"/></svg>`,
+    small:`<svg width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><rect x="70" y="72" width="50" height="50" rx="8" fill="${c1}"/><rect x="75" y="77" width="40" height="40" rx="5" fill="${c1}" opacity="0.5"/><line x1="75" y1="97" x2="115" y2="97" stroke="white" stroke-width="1.5" opacity="0.35"/><line x1="95" y1="77" x2="95" y2="117" stroke="white" stroke-width="1.5" opacity="0.35"/><rect x="5" y="86" width="65" height="22" rx="6" fill="${c2}"/><rect x="120" y="86" width="65" height="22" rx="6" fill="${c2}"/><rect x="9" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="19" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="29" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="39" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="124" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="134" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="144" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="154" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><circle cx="95" cy="97" r="7" fill="${c2}"/><circle cx="95" cy="97" r="3" fill="white" opacity="0.8"/></svg>`,
+    cylinder:`<svg width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><ellipse cx="95" cy="68" rx="32" ry="9" fill="${c2}" opacity="0.9"/><rect x="63" y="68" width="64" height="72" fill="${c1}"/><ellipse cx="95" cy="140" rx="32" ry="9" fill="${c1}" stroke="${c2}" stroke-width="2"/><rect x="5" y="86" width="58" height="26" rx="7" fill="${c2}"/><rect x="127" y="86" width="58" height="26" rx="7" fill="${c2}"/><rect x="9" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="20" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="31" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="42" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="131" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="142" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="153" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="164" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><ellipse cx="95" cy="68" rx="20" ry="20" fill="none" stroke="${c2}" stroke-width="2.5"/><ellipse cx="95" cy="68" rx="9" ry="9" fill="${c2}"/></svg>`,
+    hex:`<svg width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><polygon points="95,58 125,74 125,112 95,128 65,112 65,74" fill="${c1}"/><polygon points="95,66 118,79 118,106 95,119 72,106 72,79" fill="${c1}" opacity="0.4" stroke="white" stroke-width="1"/><rect x="5" y="84" width="60" height="24" rx="7" fill="${c2}"/><rect x="125" y="84" width="60" height="24" rx="7" fill="${c2}"/><rect x="9" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="20" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="31" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="42" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="129" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="140" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="151" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="162" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><circle cx="95" cy="93" r="9" fill="${c2}"/><circle cx="95" cy="93" r="4" fill="white" opacity="0.8"/></svg>`
+  };
+  return s[shape]||s.cube;
+}
+
+async function generate(){
+  try {
+    const r = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ answers: ans })
+    });
+    if(!r.ok) throw new Error('server error ' + r.status);
+    const sat = await r.json();
+    if(sat.error) throw new Error(sat.error);
+    showRes(sat);
+  } catch(e) {
+    console.error(e);
+    showFallback(e.message);
+  }
+}
+
+function showRes(sat){
+  document.getElementById('sGen').classList.remove('active');
+  document.getElementById('sRes').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('satSvg').innerHTML=svgShape(sat.shape||'cube',sat.color1||'#7c5cbf',sat.color2||'#ffcc00');
+  document.getElementById('satName').textContent=sat.name;
+  document.getElementById('satType').textContent=sat.type;
+  document.getElementById('satDesc').textContent=sat.description;
+  document.getElementById('satSpecs').innerHTML=[
+    {l:'&#128640; Орбита',v:sat.orbit_height},
+    {l:'&#9889; Скорость',v:sat.speed},
+    {l:'&#9878; Масса',v:sat.weight},
+    {l:'&#128247; Камеры',v:sat.cameras}
+  ].map(s=>`<div class="spec"><div class="spec-lbl">${s.l}</div><div class="spec-val">${s.v}</div></div>`).join('');
+  const ts=['background:#ede8f8;color:#7c5cbf','background:#e0f9f7;color:#009e92','background:#fff8d6;color:#a07b00','background:#ffe8f5;color:#cc3d90'];
+  document.getElementById('satTags').innerHTML=(sat.tags||[]).map((t,i)=>`<span class="tag" style="${ts[i%4]}">&#127381; ${t}</span>`).join('');
+}
+
+function showFallback(msg){
+  showRes({name:'УзбекСат-1',type:'Страж планеты',description:'Твой спутник уже летит над Землёй на огромной скорости! Он следит за лесами и реками Узбекистана каждый день. Это настоящий космический герой — и ты его придумал!',orbit_height:'520 км',speed:'27 600 км/ч',weight:'85 кг',cameras:'2 HD-камеры',tags:['Узбекистан','Наблюдение','Будущее'],color1:'#7c5cbf',color2:'#ffcc00',shape:'cube'});
+  document.getElementById('errBox').innerHTML=`<div class="err-box">&#128268; Нет связи с сервером. Убедись, что server.py запущен!</div>`;
+}
+</script>
+</body>
+</html>
