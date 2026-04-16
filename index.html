@@ -75,6 +75,22 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 .btn-back { background: transparent; color: var(--text-soft); border: 2px solid #e5e5e5; margin-top: 0.55rem; font-size: 0.93rem; }
 .btn-back:hover { background: #f5f5f5; box-shadow: none; color: var(--text); }
 
+/* Language selection */
+.lang-title { font-size: 1.5rem; font-weight: 900; text-align: center; margin-bottom: 0.3rem; }
+.lang-subtitle { font-size: 0.88rem; color: var(--text-soft); font-weight: 700; text-align: center; margin-bottom: 1.6rem; }
+.lang-opts { display: flex; flex-direction: column; gap: 0.75rem; }
+.lang-btn {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #fafafa; border: 2.5px solid #eee; border-radius: 16px;
+  cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  font-family: 'Nunito', sans-serif; width: 100%; text-align: left;
+}
+.lang-btn:hover { border-color: var(--purple); background: var(--purple-light); transform: scale(1.02); }
+.lang-flag { font-size: 2.2rem; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 13px; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.lang-name { font-size: 1.05rem; font-weight: 900; color: var(--text); }
+.lang-native { font-size: 0.78rem; font-weight: 700; color: var(--text-soft); }
+
 /* Generating */
 .gen-card { background: var(--white); border-radius: 24px; padding: 3rem 1.5rem; text-align: center; box-shadow: var(--shadow); }
 .gen-ico { font-size: 5rem; display: block; margin: 0 auto 1rem; animation: genSpin 2s ease-in-out infinite; }
@@ -105,8 +121,6 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 .btn-restart { background: linear-gradient(135deg, var(--pink), var(--orange)); margin-top: 1.2rem; }
 .btn-restart:hover { box-shadow: 0 6px 20px rgba(255,110,180,0.3); }
 .err-box { background: #fff0f0; border: 2px solid #fcc; border-radius: 13px; padding: 0.9rem 1rem; text-align: center; color: #c0392b; font-size: 0.85rem; font-weight: 700; margin-top: 0.75rem; line-height: 1.5; }
-
-/* UzCosmos footer badge on result */
 .uz-badge { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 1rem; opacity: 0.6; }
 .uz-badge img { height: 20px; }
 .uz-badge span { font-size: 0.75rem; font-weight: 800; color: var(--uz-blue); }
@@ -119,260 +133,437 @@ body { font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--te
 <div class="stars-bg" id="starsWrap"></div>
 <div class="wrap">
 
-  <div class="header">
-    <div class="logo-wrap">
-      <img src="Logo.png" alt="Uzcosmos" onerror="this.style.display='none'">
+  <!-- LANGUAGE SELECTION -->
+  <div id="sLang" class="screen active">
+    <div style="text-align:center; margin-bottom:1.5rem">
+      <div class="logo-wrap"><img src="Logo.png" alt="Uzcosmos" onerror="this.style.display='none'"></div>
     </div>
-    <h1>Построй свой<br><em>спутник!</em></h1>
-    <p>5 вопросов — и <strong>Uzcosmos</strong> создаст твой спутник</p>
-  </div>
-
-  <div class="prog-row">
-    <div class="pdot active" id="d0">1</div><div class="pline" id="l0"></div>
-    <div class="pdot" id="d1">2</div><div class="pline" id="l1"></div>
-    <div class="pdot" id="d2">3</div><div class="pline" id="l2"></div>
-    <div class="pdot" id="d3">4</div><div class="pline" id="l3"></div>
-    <div class="pdot" id="d4">5</div>
-  </div>
-
-  <!-- Q1: Миссия -->
-  <div id="s0" class="screen active"><div class="card">
-    <div class="q-badge">&#127760; Вопрос 1 из 5</div>
-    <div class="q-title">Для чего твой спутник?</div>
-    <div class="q-hint">Выбери главную миссию!</div>
-    <div class="opts">
-      <div class="opt" data-q="0" data-v="наблюдать за звёздами и далёкими планетами" onclick="pick(this)"><div class="opt-ico">&#128301;</div><div class="opt-txt"><strong>Смотреть на звёзды</strong><span>Изучать далёкие планеты и галактики</span></div></div>
-      <div class="opt" data-q="0" data-v="следить за городами и природой Земли" onclick="pick(this)"><div class="opt-ico">&#128064;</div><div class="opt-txt"><strong>Следить за городами</strong><span>И за природой... и немножко за соседями!</span></div></div>
-      <div class="opt" data-q="0" data-v="передавать сигналы, звонки и интернет по всей Земле" onclick="pick(this)"><div class="opt-ico">&#128225;</div><div class="opt-txt"><strong>Связь и интернет</strong><span>Передавать звонки и сигналы по всей Земле</span></div></div>
-      <div class="opt" data-q="0" data-v="следить за погодой и предсказывать бури" onclick="pick(this)"><div class="opt-ico">&#127750;</div><div class="opt-txt"><strong>Следить за погодой</strong><span>Предсказывать бури и ураганы заранее</span></div></div>
-      <div class="opt" data-q="0" data-v="фотографировать Землю каждый день" onclick="pick(this)"><div class="opt-ico">&#128247;</div><div class="opt-txt"><strong>Фотографировать Землю</strong><span>Делать снимки нашей планеты каждый день</span></div></div>
-    </div>
-    <button class="btn" id="b0" disabled onclick="go(0)">Вперёд! &#128640;</button>
-  </div></div>
-
-  <!-- Q2: Высота -->
-  <div id="s1" class="screen"><div class="card">
-    <div class="q-badge">&#127775; Вопрос 2 из 5</div>
-    <div class="q-title">На какой высоте летишь?</div>
-    <div class="q-hint">Чем выше — тем больше видно!</div>
-    <div class="opts">
-      <div class="opt" data-q="1" data-v="низкая орбита 400-600 км — совсем близко к Земле" onclick="pick(this)"><div class="opt-ico">&#127968;</div><div class="opt-txt"><strong>Совсем низко!</strong><span>400–600 км — как самолёт, только быстрее!</span></div></div>
-      <div class="opt" data-q="1" data-v="средняя орбита 20000 км — высоко над облаками" onclick="pick(this)"><div class="opt-ico">&#9992;</div><div class="opt-txt"><strong>Высоко над облаками</strong><span>20 000 км — очень-очень высоко!</span></div></div>
-      <div class="opt" data-q="1" data-v="геостационарная орбита 36000 км — почти до Луны" onclick="pick(this)"><div class="opt-ico">&#127761;</div><div class="opt-txt"><strong>Почти до Луны!</strong><span>36 000 км — висит над одним местом всегда</span></div></div>
-    </div>
-    <button class="btn" id="b1" disabled onclick="go(1)">Вперёд! &#128640;</button>
-    <button class="btn btn-back" onclick="bk(1)">&#8592; Назад</button>
-  </div></div>
-
-  <!-- Q3: Цвет -->
-  <div id="s2" class="screen"><div class="card">
-    <div class="q-badge">&#127912; Вопрос 3 из 5</div>
-    <div class="q-title">Какого цвета твой спутник?</div>
-    <div class="q-hint">Выбери стиль своего аппарата!</div>
-    <div class="opts">
-      <div class="opt" data-q="2" data-v="красный и огненный как супергерой" onclick="pick(this)"><div class="opt-ico">&#128308;</div><div class="opt-txt"><strong>Красный и огненный!</strong><span>Как настоящий супергерой в небе</span></div></div>
-      <div class="opt" data-q="2" data-v="синий и холодный как глубокий космос" onclick="pick(this)"><div class="opt-ico">&#128309;</div><div class="opt-txt"><strong>Синий как космос</strong><span>Холодный, загадочный, как звёздное небо</span></div></div>
-      <div class="opt" data-q="2" data-v="золотой и блестящий как настоящая звезда" onclick="pick(this)"><div class="opt-ico">&#11088;</div><div class="opt-txt"><strong>Золотой и блестящий!</strong><span>Сверкает в космосе как настоящая звезда</span></div></div>
-      <div class="opt" data-q="2" data-v="зелёный защитник природы и экологии" onclick="pick(this)"><div class="opt-ico">&#128994;</div><div class="opt-txt"><strong>Зелёный защитник</strong><span>Следит за природой и экологией планеты</span></div></div>
-      <div class="opt" data-q="2" data-v="чёрный загадочный и засекреченный" onclick="pick(this)"><div class="opt-ico">&#11035;</div><div class="opt-txt"><strong>Чёрный и загадочный</strong><span>Секретная миссия — никто не знает!</span></div></div>
-      <div class="opt" data-q="2" data-v="разноцветный радужный самый яркий в космосе" onclick="pick(this)"><div class="opt-ico">&#127752;</div><div class="opt-txt"><strong>Разноцветный!</strong><span>Самый яркий и весёлый спутник в космосе</span></div></div>
-    </div>
-    <button class="btn" id="b2" disabled onclick="go(2)">Вперёд! &#128640;</button>
-    <button class="btn btn-back" onclick="bk(2)">&#8592; Назад</button>
-  </div></div>
-
-  <!-- Q4: Суперсила -->
-  <div id="s3" class="screen"><div class="card">
-    <div class="q-badge">&#128293; Вопрос 4 из 5</div>
-    <div class="q-title">Какая у него суперсила?</div>
-    <div class="q-hint">Каждый спутник умеет что-то особенное!</div>
-    <div class="opts">
-      <div class="opt" data-q="3" data-v="видит сквозь облака и туман с помощью радара" onclick="pick(this)"><div class="opt-ico">&#128065;</div><div class="opt-txt"><strong>Видит сквозь облака!</strong><span>Радар пробивает любой туман и тучи</span></div></div>
-      <div class="opt" data-q="3" data-v="слышит сигналы со всей планеты" onclick="pick(this)"><div class="opt-ico">&#128251;</div><div class="opt-txt"><strong>Огромное ухо!</strong><span>Слышит сигналы с любой точки Земли</span></div></div>
-      <div class="opt" data-q="3" data-v="видит в полной темноте с ночным зрением" onclick="pick(this)"><div class="opt-ico">&#127762;</div><div class="opt-txt"><strong>Ночное зрение!</strong><span>Видит в темноте как днём</span></div></div>
-      <div class="opt" data-q="3" data-v="командует целой группой других спутников" onclick="pick(this)"><div class="opt-ico">&#128081;</div><div class="opt-txt"><strong>Командир флота!</strong><span>Управляет целой группой спутников</span></div></div>
-      <div class="opt" data-q="3" data-v="чувствует тепло и находит пожары на Земле" onclick="pick(this)"><div class="opt-ico">&#128293;</div><div class="opt-txt"><strong>Находит пожары!</strong><span>Чувствует тепло и предупреждает об огне</span></div></div>
-      <div class="opt" data-q="3" data-v="следит за таянием льдов и изменением климата" onclick="pick(this)"><div class="opt-ico">&#10052;</div><div class="opt-txt"><strong>Страж климата!</strong><span>Следит за льдами и изменением погоды</span></div></div>
-    </div>
-    <button class="btn" id="b3" disabled onclick="go(3)">Вперёд! &#128640;</button>
-    <button class="btn btn-back" onclick="bk(3)">&#8592; Назад</button>
-  </div></div>
-
-  <!-- Q5: Имя (открытое поле) -->
-  <div id="s4" class="screen"><div class="card">
-    <div class="q-badge">&#127881; Вопрос 5 из 5</div>
-    <div class="q-title">Как назовёшь свой спутник?</div>
-    <div class="q-hint">Придумай крутое имя — оно войдёт в историю!</div>
-    <div class="name-wrap">
-      <input
-        class="name-input"
-        id="nameInput"
-        type="text"
-        maxlength="30"
-        placeholder="Например: Звезда, Орёл, Навруз..."
-        oninput="onNameInput()"
-      >
-    </div>
-    <button class="btn" id="b4" disabled onclick="go(4)">&#127775; Создать мой спутник!</button>
-    <button class="btn btn-back" onclick="bk(4)">&#8592; Назад</button>
-  </div></div>
-
-  <!-- Generating -->
-  <div id="sGen" class="screen">
-    <div class="gen-card">
-      <span class="gen-ico">&#128752;</span>
-      <div class="gen-title">Uzcosmos строит твой спутник...</div>
-      <div class="gen-sub">Придумываем миссию и характеристики &#10024;</div>
-      <div class="dots"><span></span><span></span><span></span></div>
-    </div>
-  </div>
-
-  <!-- Result -->
-  <div id="sRes" class="screen">
     <div class="card">
-      <div style="text-align:center"><span class="res-congrats">&#127881; Вот твой спутник!</span></div>
-      <div class="sat-vis"><div class="sat-svg-wrap" id="satSvg"></div></div>
-      <div style="text-align:center">
-        <div class="sat-name" id="satName"></div>
-        <span class="sat-type" id="satType"></span>
-      </div>
-      <div class="sat-desc" id="satDesc"></div>
-      <div class="specs" id="satSpecs"></div>
-      <div class="tags" id="satTags"></div>
-      <div class="uz-badge">
-        <img src="Logo.png" alt="Uzcosmos" onerror="this.style.display='none'">
-        <span>Uzcosmos Space Agency</span>
+      <div class="lang-title">🌍 Choose language</div>
+      <div class="lang-subtitle">Выберите язык · Tilni tanlang · Choose your language</div>
+      <div class="lang-opts">
+        <button class="lang-btn" onclick="setLang('ru')">
+          <div class="lang-flag">🇷🇺</div>
+          <div><div class="lang-name">Русский</div><div class="lang-native">Russian</div></div>
+        </button>
+        <button class="lang-btn" onclick="setLang('uz')">
+          <div class="lang-flag">🇺🇿</div>
+          <div><div class="lang-name">O'zbek</div><div class="lang-native">Uzbek</div></div>
+        </button>
+        <button class="lang-btn" onclick="setLang('en')">
+          <div class="lang-flag">🇬🇧</div>
+          <div><div class="lang-name">English</div><div class="lang-native">English</div></div>
+        </button>
       </div>
     </div>
-    <div id="errBox"></div>
-    <button class="btn btn-restart" onclick="reset()">&#128260; Попробовать снова!</button>
   </div>
 
+  <!-- MAIN GAME (hidden until language chosen) -->
+  <div id="mainGame" style="display:none">
+
+    <div class="header">
+      <div class="logo-wrap"><img src="Logo.png" alt="Uzcosmos" onerror="this.style.display='none'"></div>
+      <h1 id="headerTitle"></h1>
+      <p id="headerSub"></p>
+    </div>
+
+    <div class="prog-row">
+      <div class="pdot" id="d0">1</div><div class="pline" id="l0"></div>
+      <div class="pdot" id="d1">2</div><div class="pline" id="l1"></div>
+      <div class="pdot" id="d2">3</div><div class="pline" id="l2"></div>
+      <div class="pdot" id="d3">4</div><div class="pline" id="l3"></div>
+      <div class="pdot" id="d4">5</div>
+    </div>
+
+    <div id="s0" class="screen active"><div class="card" id="q0"></div></div>
+    <div id="s1" class="screen"><div class="card" id="q1"></div></div>
+    <div id="s2" class="screen"><div class="card" id="q2"></div></div>
+    <div id="s3" class="screen"><div class="card" id="q3"></div></div>
+    <div id="s4" class="screen"><div class="card" id="q4"></div></div>
+
+    <!-- Generating -->
+    <div id="sGen" class="screen">
+      <div class="gen-card">
+        <span class="gen-ico">🛸</span>
+        <div class="gen-title" id="genTitle"></div>
+        <div class="gen-sub" id="genSub"></div>
+        <div class="dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="sRes" class="screen">
+      <div class="card">
+        <div style="text-align:center"><span class="res-congrats" id="resCongratsLbl"></span></div>
+        <div class="sat-vis"><div class="sat-svg-wrap" id="satSvg"></div></div>
+        <div style="text-align:center">
+          <div class="sat-name" id="satName"></div>
+          <span class="sat-type" id="satType"></span>
+        </div>
+        <div class="sat-desc" id="satDesc"></div>
+        <div class="specs" id="satSpecs"></div>
+        <div class="tags" id="satTags"></div>
+        <div class="uz-badge">
+          <img src="Logo.png" alt="Uzcosmos" onerror="this.style.display='none'">
+          <span>Uzcosmos Space Agency</span>
+        </div>
+      </div>
+      <div id="errBox"></div>
+      <button class="btn btn-restart" id="btnRestart" onclick="reset()"></button>
+    </div>
+
+  </div><!-- /mainGame -->
 </div>
+
 <script>
+'use strict';
+
+/* ── Translations ─────────────────────────────────── */
+const T = {
+  ru: {
+    title: 'Построй свой<br><em>спутник!</em>',
+    subtitle: '5 вопросов — и <strong>Uzcosmos</strong> создаст твой спутник',
+    fwd: 'Вперёд! 🚀', back: '← Назад',
+    genTitle: 'Uzcosmos строит твой спутник...',
+    genSub: 'Придумываем миссию и характеристики ✨',
+    congrats: '🎉 Вот твой спутник!',
+    restart: '🔄 Попробовать снова!',
+    err: '🔌 Не удалось связаться с Uzcosmos. Попробуй ещё раз!',
+    specLabels: ['🚀 Орбита', '⚡ Скорость', '⚓ Масса', '📸 Камеры'],
+    questions: [
+      { badge:'🌍 Вопрос 1 из 5', title:'Для чего твой спутник?', hint:'Выбери главную миссию!',
+        opts:[
+          {ico:'🔭', s:'Смотреть на звёзды', d:'Изучать далёкие планеты и галактики'},
+          {ico:'👀', s:'Следить за городами', d:'И за природой... и немножко за соседями!'},
+          {ico:'📡', s:'Связь и интернет', d:'Передавать звонки и сигналы по всей Земле'},
+          {ico:'⛅', s:'Следить за погодой', d:'Предсказывать бури и ураганы заранее'},
+          {ico:'📸', s:'Фотографировать Землю', d:'Делать снимки нашей планеты каждый день'},
+        ]},
+      { badge:'🌟 Вопрос 2 из 5', title:'На какой высоте летишь?', hint:'Чем выше — тем больше видно!',
+        opts:[
+          {ico:'🏠', s:'Совсем низко!', d:'400–600 км — как самолёт, только быстрее!'},
+          {ico:'✈️', s:'Высоко над облаками', d:'20 000 км — очень-очень высоко!'},
+          {ico:'🌙', s:'Почти до Луны!', d:'36 000 км — висит над одним местом всегда'},
+        ]},
+      { badge:'🎨 Вопрос 3 из 5', title:'Какого цвета твой спутник?', hint:'Выбери стиль своего аппарата!',
+        opts:[
+          {ico:'🔴', s:'Красный и огненный!', d:'Как настоящий супергерой в небе'},
+          {ico:'🔵', s:'Синий как космос', d:'Холодный, загадочный, как звёздное небо'},
+          {ico:'⭐', s:'Золотой и блестящий!', d:'Сверкает в космосе как настоящая звезда'},
+          {ico:'🟢', s:'Зелёный защитник', d:'Следит за природой и экологией планеты'},
+          {ico:'⬛', s:'Чёрный и загадочный', d:'Секретная миссия — никто не знает!'},
+          {ico:'🌈', s:'Разноцветный!', d:'Самый яркий и весёлый спутник в космосе'},
+        ]},
+      { badge:'🔥 Вопрос 4 из 5', title:'Какая у него суперсила?', hint:'Каждый спутник умеет что-то особенное!',
+        opts:[
+          {ico:'👁️', s:'Видит сквозь облака!', d:'Радар пробивает любой туман и тучи'},
+          {ico:'📻', s:'Огромное ухо!', d:'Слышит сигналы с любой точки Земли'},
+          {ico:'🌙', s:'Ночное зрение!', d:'Видит в темноте как днём'},
+          {ico:'👑', s:'Командир флота!', d:'Управляет целой группой спутников'},
+          {ico:'🔥', s:'Находит пожары!', d:'Чувствует тепло и предупреждает об огне'},
+          {ico:'❄️', s:'Страж климата!', d:'Следит за льдами и изменением погоды'},
+        ]},
+      { badge:'🎉 Вопрос 5 из 5', title:'Как назовёшь свой спутник?',
+        hint:'Придумай крутое имя — оно войдёт в историю!',
+        placeholder:'Например: Звезда, Орёл, Навруз...', btnCreate:'🌟 Создать мой спутник!'},
+    ],
+    aiPromptLang: 'Отвечай ТОЛЬКО на русском языке.',
+  },
+
+  uz: {
+    title: "O'z sun'iy yo'ldoshingni<br><em>yarat!</em>",
+    subtitle: "5 savol — va <strong>Uzcosmos</strong> sizning sun'iy yo'ldoshingizni yaratadi",
+    fwd: "Oldinga! 🚀", back: "← Orqaga",
+    genTitle: "Uzcosmos sizning sun'iy yo'ldoshingizni yaratmoqda...",
+    genSub: "Missiya va xususiyatlarni o'ylab topmoqdamiz ✨",
+    congrats: "🎉 Mana sizning sun'iy yo'ldoshingiz!",
+    restart: "🔄 Qayta urinib ko'ring!",
+    err: "🔌 Uzcosmos bilan bog'lanib bo'lmadi. Qayta urinib ko'ring!",
+    specLabels: ["🚀 Orbita", "⚡ Tezlik", "⚓ Massa", "📸 Kameralar"],
+    questions: [
+      { badge:"🌍 Savol 1/5", title:"Sun'iy yo'ldoshingiz nima uchun?", hint:"Asosiy missiyani tanlang!",
+        opts:[
+          {ico:'🔭', s:"Yulduzlarga qarash", d:"Uzoq sayyoralar va galaktikalarni o'rganish"},
+          {ico:'👀', s:"Shaharlarni kuzatish", d:"Va tabiatni... va qo'shnilarni ham!"},
+          {ico:'📡', s:"Aloqa va internet", d:"Butun Yer bo'ylab signal va qo'ng'iroq uzatish"},
+          {ico:'⛅', s:"Ob-havoni kuzatish", d:"Bo'ron va to'fonlarni oldindan bashorat qilish"},
+          {ico:'📸', s:"Yerni suratga olish", d:"Har kuni sayyoramizning rasmlarini olish"},
+        ]},
+      { badge:"🌟 Savol 2/5", title:"Qanday balandlikda uchasan?", hint:"Balandroq — ko'proq ko'rinadi!",
+        opts:[
+          {ico:'🏠', s:"Juda past!", d:"400–600 km — samolyot kabi, lekin tezroq!"},
+          {ico:'✈️', s:"Bulutlar ustida", d:"20 000 km — juda-juda baland!"},
+          {ico:'🌙', s:"Oygacha!", d:"36 000 km — doim bir joyda turadi"},
+        ]},
+      { badge:"🎨 Savol 3/5", title:"Sun'iy yo'ldoshingiz qanday rangda?", hint:"Apparatingiz uslubini tanlang!",
+        opts:[
+          {ico:'🔴', s:"Qizil va olovli!", d:"Haqiqiy superkahramonday osmonda"},
+          {ico:'🔵', s:"Ko'k kabi kosmik", d:"Sovuq, sirli, yulduzli osmondek"},
+          {ico:'⭐', s:"Oltin va yaltiroq!", d:"Kosmosda haqiqiy yulduzday yarqiraydi"},
+          {ico:'🟢', s:"Yashil himoyachi", d:"Tabiat va ekologiyani kuzatadi"},
+          {ico:'⬛', s:"Qora va sirli", d:"Maxfiy missiya — hech kim bilmaydi!"},
+          {ico:'🌈', s:"Rangli!", d:"Kosmosdagi eng yorqin va quvnoq yo'ldosh"},
+        ]},
+      { badge:"🔥 Savol 4/5", title:"Uning superkuchi nima?", hint:"Har bir yo'ldosh biror narsani biladi!",
+        opts:[
+          {ico:'👁️', s:"Bulutlarni ko'radi!", d:"Radar har qanday tumanni yorib o'tadi"},
+          {ico:'📻', s:"Ulkan quloq!", d:"Yer yuzining har nuqtasidan signal eshitadi"},
+          {ico:'🌙', s:"Tungi ko'rish!", d:"Qorong'ida kunduzgiday ko'radi"},
+          {ico:'👑', s:"Flot komandiri!", d:"Butun yo'ldoshlar guruhini boshqaradi"},
+          {ico:'🔥', s:"Yong'in topadi!", d:"Issiqlikni his qiladi va ogohlantiradi"},
+          {ico:'❄️', s:"Iqlim qo'riqchisi!", d:"Muzliklar va ob-havo o'zgarishini kuzatadi"},
+        ]},
+      { badge:"🎉 Savol 5/5", title:"Sun'iy yo'ldoshingiz nomi nima?",
+        hint:"Zo'r nom o'ylab top — u tarixga kiradi!",
+        placeholder:"Masalan: Yulduz, Burgut, Navro'z...", btnCreate:"🌟 Sun'iy yo'ldoshimni yaratish!"},
+    ],
+    aiPromptLang: "Javobni FAQAT o'zbek tilida yoz.",
+  },
+
+  en: {
+    title: "Build your<br><em>satellite!</em>",
+    subtitle: "5 questions — and <strong>Uzcosmos</strong> will build your satellite",
+    fwd: "Next! 🚀", back: "← Back",
+    genTitle: "Uzcosmos is building your satellite...",
+    genSub: "Designing your mission and specs ✨",
+    congrats: "🎉 Here's your satellite!",
+    restart: "🔄 Try again!",
+    err: "🔌 Couldn't connect to Uzcosmos. Please try again!",
+    specLabels: ["🚀 Orbit", "⚡ Speed", "⚓ Mass", "📸 Cameras"],
+    questions: [
+      { badge:"🌍 Question 1 of 5", title:"What is your satellite for?", hint:"Choose your main mission!",
+        opts:[
+          {ico:'🔭', s:"Watch the stars", d:"Study distant planets and galaxies"},
+          {ico:'👀', s:"Watch over cities", d:"And nature... and maybe the neighbours!"},
+          {ico:'📡', s:"Communications", d:"Transmit calls and internet across Earth"},
+          {ico:'⛅', s:"Track weather", d:"Predict storms and hurricanes in advance"},
+          {ico:'📸', s:"Photograph Earth", d:"Take pictures of our planet every day"},
+        ]},
+      { badge:"🌟 Question 2 of 5", title:"What altitude will you fly at?", hint:"Higher means more to see!",
+        opts:[
+          {ico:'🏠', s:"Super low!", d:"400–600 km — like a plane, but faster!"},
+          {ico:'✈️', s:"High above the clouds", d:"20,000 km — very, very high!"},
+          {ico:'🌙', s:"Almost to the Moon!", d:"36,000 km — hovers over one spot forever"},
+        ]},
+      { badge:"🎨 Question 3 of 5", title:"What colour is your satellite?", hint:"Choose your spacecraft's style!",
+        opts:[
+          {ico:'🔴', s:"Red and fiery!", d:"Like a true superhero in the sky"},
+          {ico:'🔵', s:"Blue like space", d:"Cool, mysterious, like the starry sky"},
+          {ico:'⭐', s:"Golden and shiny!", d:"Gleaming in space like a real star"},
+          {ico:'🟢', s:"Green guardian", d:"Watches over nature and ecology"},
+          {ico:'⬛', s:"Dark and mysterious", d:"Secret mission — nobody knows!"},
+          {ico:'🌈', s:"Rainbow!", d:"The brightest, most fun satellite in space"},
+        ]},
+      { badge:"🔥 Question 4 of 5", title:"What is its superpower?", hint:"Every satellite has something special!",
+        opts:[
+          {ico:'👁️', s:"Sees through clouds!", d:"Radar cuts through any fog or storm"},
+          {ico:'📻', s:"Giant ear!", d:"Hears signals from anywhere on Earth"},
+          {ico:'🌙', s:"Night vision!", d:"Sees in total darkness like daytime"},
+          {ico:'👑', s:"Fleet commander!", d:"Controls a whole group of satellites"},
+          {ico:'🔥', s:"Fire detector!", d:"Senses heat and warns about fires"},
+          {ico:'❄️', s:"Climate guardian!", d:"Tracks ice melt and weather changes"},
+        ]},
+      { badge:"🎉 Question 5 of 5", title:"What will you name your satellite?",
+        hint:"Come up with a cool name — it'll go down in history!",
+        placeholder:"E.g.: Star, Eagle, Phoenix...", btnCreate:"🌟 Create my satellite!"},
+    ],
+    aiPromptLang: "Respond ONLY in English.",
+  },
+};
+
+/* ── State ─────────────────────────────────────────── */
 const ans = {};
+let currentLang = 'ru';
 const TOTAL = 5;
 
+/* ── Stars ─────────────────────────────────────────── */
 (function(){
-  const w=document.getElementById('starsWrap');
-  const em=['&#11088;','&#10024;','&#127775;','&#9734;','&#128171;'];
-  for(let i=0;i<14;i++){
-    const s=document.createElement('span');
-    s.className='star';
-    s.innerHTML=em[i%em.length];
-    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*4}s;font-size:${13+Math.random()*13}px`;
+  const w = document.getElementById('starsWrap');
+  const em = ['⭐','✨','🌟','★','💫'];
+  for(let i = 0; i < 14; i++){
+    const s = document.createElement('span');
+    s.className = 'star';
+    s.innerHTML = em[i % em.length];
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*4}s;font-size:${13+Math.random()*13}px`;
     w.appendChild(s);
   }
 })();
 
-function pick(el){
-  const q=el.dataset.q;
-  document.querySelectorAll(`[data-q="${q}"]`).forEach(o=>o.classList.remove('sel'));
-  el.classList.add('sel');
-  ans[q]=el.dataset.v;
-  const b=document.getElementById('b'+q);
-  if(b) b.disabled=false;
+/* ── Language setup ────────────────────────────────── */
+function setLang(lang) {
+  currentLang = lang;
+  const t = T[lang];
+
+  // Show game
+  document.getElementById('sLang').classList.remove('active');
+  document.getElementById('mainGame').style.display = '';
+
+  // Header
+  document.getElementById('headerTitle').innerHTML = t.title;
+  document.getElementById('headerSub').innerHTML = t.subtitle;
+
+  // Generating screen
+  document.getElementById('genTitle').textContent = t.genTitle;
+  document.getElementById('genSub').textContent = t.genSub;
+
+  // Result screen
+  document.getElementById('resCongratsLbl').textContent = t.congrats;
+  document.getElementById('btnRestart').textContent = t.restart;
+
+  // Render all question screens
+  for(let i = 0; i < TOTAL; i++) renderQ(i);
+
+  // Activate first question
+  document.getElementById('s0').classList.add('active');
+  document.getElementById('d0').classList.add('active');
+
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function onNameInput(){
-  const val=document.getElementById('nameInput').value.trim();
-  ans[4]=val;
+function renderQ(n) {
+  const t = T[currentLang];
+  const q = t.questions[n];
+  const el = document.getElementById('q' + n);
+
+  if(n < 4) {
+    const optsHtml = q.opts.map(o =>
+      `<div class="opt" data-q="${n}" data-v="${escHtml(o.s)}" onclick="pick(this)">
+        <div class="opt-ico">${o.ico}</div>
+        <div class="opt-txt"><strong>${escHtml(o.s)}</strong><span>${escHtml(o.d)}</span></div>
+      </div>`
+    ).join('');
+
+    el.innerHTML = `
+      <div class="q-badge">${q.badge}</div>
+      <div class="q-title">${q.title}</div>
+      <div class="q-hint">${q.hint}</div>
+      <div class="opts">${optsHtml}</div>
+      <button class="btn" id="b${n}" disabled onclick="go(${n})">${t.fwd}</button>
+      ${n > 0 ? `<button class="btn btn-back" onclick="bk(${n})">${t.back}</button>` : ''}
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="q-badge">${q.badge}</div>
+      <div class="q-title">${q.title}</div>
+      <div class="q-hint">${q.hint}</div>
+      <div class="name-wrap">
+        <input class="name-input" id="nameInput" type="text" maxlength="30"
+          placeholder="${escHtml(q.placeholder)}" oninput="onNameInput()">
+      </div>
+      <button class="btn" id="b4" disabled onclick="go(4)">${q.btnCreate}</button>
+      <button class="btn btn-back" onclick="bk(4)">${t.back}</button>
+    `;
+  }
+
+  // Restore answer if navigating back
+  if(ans[n] !== undefined && n < 4) {
+    el.querySelectorAll('.opt').forEach(o => {
+      if(o.dataset.v === ans[n]) {
+        o.classList.add('sel');
+        const btn = document.getElementById('b' + n);
+        if(btn) btn.disabled = false;
+      }
+    });
+  }
+  if(ans[4] !== undefined && n === 4) {
+    const ni = document.getElementById('nameInput');
+    if(ni) { ni.value = ans[4]; document.getElementById('b4').disabled = false; }
+  }
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── Quiz logic ────────────────────────────────────── */
+function pick(el) {
+  const q = el.dataset.q;
+  document.querySelectorAll(`[data-q="${q}"]`).forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  ans[q] = el.dataset.v;
+  const b = document.getElementById('b' + q);
+  if(b) b.disabled = false;
+}
+
+function onNameInput() {
+  const val = document.getElementById('nameInput').value.trim();
+  ans[4] = val;
   document.getElementById('b4').disabled = val.length < 1;
 }
 
-function go(q){
-  document.getElementById('s'+q).classList.remove('active');
-  const d=document.getElementById('d'+q);
-  d.classList.remove('active'); d.classList.add('done'); d.innerHTML='&#10003;';
-  const l=document.getElementById('l'+q); if(l) l.classList.add('done');
-  if(q<TOTAL-1){
-    document.getElementById('s'+(q+1)).classList.add('active');
-    document.getElementById('d'+(q+1)).classList.add('active');
+function go(q) {
+  document.getElementById('s' + q).classList.remove('active');
+  const d = document.getElementById('d' + q);
+  d.classList.remove('active'); d.classList.add('done'); d.innerHTML = '✓';
+  const l = document.getElementById('l' + q); if(l) l.classList.add('done');
+  if(q < TOTAL - 1) {
+    document.getElementById('s' + (q+1)).classList.add('active');
+    document.getElementById('d' + (q+1)).classList.add('active');
   } else {
     document.getElementById('sGen').classList.add('active');
     generate();
   }
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function bk(q){
-  document.getElementById('s'+q).classList.remove('active');
-  document.getElementById('s'+(q-1)).classList.add('active');
-  const d=document.getElementById('d'+q); d.classList.remove('active');
-  const p=document.getElementById('d'+(q-1)); p.classList.remove('done'); p.classList.add('active'); p.innerHTML=q;
-  const l=document.getElementById('l'+(q-1)); if(l) l.classList.remove('done');
-  window.scrollTo({top:0,behavior:'smooth'});
+function bk(q) {
+  document.getElementById('s' + q).classList.remove('active');
+  document.getElementById('s' + (q-1)).classList.add('active');
+  const d = document.getElementById('d' + q); d.classList.remove('active');
+  const p = document.getElementById('d' + (q-1));
+  p.classList.remove('done'); p.classList.add('active'); p.innerHTML = q;
+  const l = document.getElementById('l' + (q-1)); if(l) l.classList.remove('done');
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function reset(){
-  Object.keys(ans).forEach(k=>delete ans[k]);
-  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
-  document.getElementById('nameInput').value='';
-  for(let i=0;i<TOTAL;i++){
-    const b=document.getElementById('b'+i); if(b) b.disabled=true;
-    const d=document.getElementById('d'+i); d.classList.remove('done','active'); d.innerHTML=i+1;
-    const l=document.getElementById('l'+i); if(l) l.classList.remove('done');
+function reset() {
+  Object.keys(ans).forEach(k => delete ans[k]);
+  for(let i = 0; i < TOTAL; i++) {
+    const d = document.getElementById('d' + i);
+    d.classList.remove('done','active'); d.innerHTML = i+1;
+    const l = document.getElementById('l' + i); if(l) l.classList.remove('done');
   }
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('d0').classList.add('active');
-  document.getElementById('s0').classList.add('active');
-  document.getElementById('errBox').innerHTML='';
-  window.scrollTo({top:0,behavior:'smooth'});
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('errBox').innerHTML = '';
+  document.getElementById('mainGame').style.display = 'none';
+  document.getElementById('sLang').classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
-function svgShape(shape,c1,c2){
-  const s={
+/* ── SVG shapes ────────────────────────────────────── */
+function svgShape(shape, c1, c2) {
+  const s = {
     cube:`<svg width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><rect x="55" y="60" width="80" height="75" rx="12" fill="${c1}"/><rect x="62" y="67" width="66" height="61" rx="8" fill="${c1}" opacity="0.55"/><line x1="62" y1="97" x2="128" y2="97" stroke="white" stroke-width="1.5" opacity="0.35"/><line x1="95" y1="67" x2="95" y2="128" stroke="white" stroke-width="1.5" opacity="0.35"/><rect x="5" y="82" width="50" height="32" rx="8" fill="${c2}"/><rect x="135" y="82" width="50" height="32" rx="8" fill="${c2}"/><rect x="9" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="21" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="33" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="139" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="151" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><rect x="163" y="86" width="10" height="24" rx="3" fill="white" opacity="0.35"/><circle cx="95" cy="97" r="10" fill="${c2}"/><circle cx="95" cy="97" r="5" fill="white" opacity="0.8"/></svg>`,
     small:`<svg width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><rect x="70" y="72" width="50" height="50" rx="8" fill="${c1}"/><rect x="75" y="77" width="40" height="40" rx="5" fill="${c1}" opacity="0.5"/><line x1="75" y1="97" x2="115" y2="97" stroke="white" stroke-width="1.5" opacity="0.35"/><line x1="95" y1="77" x2="95" y2="117" stroke="white" stroke-width="1.5" opacity="0.35"/><rect x="5" y="86" width="65" height="22" rx="6" fill="${c2}"/><rect x="120" y="86" width="65" height="22" rx="6" fill="${c2}"/><rect x="9" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="19" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="29" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="39" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="124" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="134" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="144" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><rect x="154" y="89" width="8" height="15" rx="2" fill="white" opacity="0.35"/><circle cx="95" cy="97" r="7" fill="${c2}"/><circle cx="95" cy="97" r="3" fill="white" opacity="0.8"/></svg>`,
     cylinder:`<svg width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><ellipse cx="95" cy="68" rx="32" ry="9" fill="${c2}" opacity="0.9"/><rect x="63" y="68" width="64" height="72" fill="${c1}"/><ellipse cx="95" cy="140" rx="32" ry="9" fill="${c1}" stroke="${c2}" stroke-width="2"/><rect x="5" y="86" width="58" height="26" rx="7" fill="${c2}"/><rect x="127" y="86" width="58" height="26" rx="7" fill="${c2}"/><rect x="9" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="20" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="31" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="42" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="131" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="142" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="153" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><rect x="164" y="90" width="9" height="18" rx="2" fill="white" opacity="0.35"/><ellipse cx="95" cy="68" rx="20" ry="20" fill="none" stroke="${c2}" stroke-width="2.5"/><ellipse cx="95" cy="68" rx="9" ry="9" fill="${c2}"/></svg>`,
     hex:`<svg width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg"><polygon points="95,58 125,74 125,112 95,128 65,112 65,74" fill="${c1}"/><polygon points="95,66 118,79 118,106 95,119 72,106 72,79" fill="${c1}" opacity="0.4" stroke="white" stroke-width="1"/><rect x="5" y="84" width="60" height="24" rx="7" fill="${c2}"/><rect x="125" y="84" width="60" height="24" rx="7" fill="${c2}"/><rect x="9" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="20" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="31" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="42" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="129" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="140" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="151" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><rect x="162" y="88" width="9" height="16" rx="2" fill="white" opacity="0.35"/><circle cx="95" cy="93" r="9" fill="${c2}"/><circle cx="95" cy="93" r="4" fill="white" opacity="0.8"/></svg>`
   };
-  return s[shape]||s.cube;
+  return s[shape] || s.cube;
 }
 
-// Map color choice to hex
-function colorFromAnswer(v){
-  if(v.includes('красн')) return {c1:'#e74c3c',c2:'#ff8c42'};
-  if(v.includes('син')) return {c1:'#2980b9',c2:'#a29bfe'};
-  if(v.includes('золот')) return {c1:'#f39c12',c2:'#fff8d6'};
-  if(v.includes('зелён')) return {c1:'#27ae60',c2:'#00c6b8'};
-  if(v.includes('чёрн')) return {c1:'#2d2060',c2:'#7c5cbf'};
-  return {c1:'#ff6eb4',c2:'#ffcc00'}; // разноцветный
+function colorFromAnswer(v) {
+  const lv = (v||'').toLowerCase();
+  if(lv.includes('красн') || lv.includes('qizil') || lv.includes('red'))   return {c1:'#e74c3c', c2:'#ff8c42'};
+  if(lv.includes('син')  || lv.includes("ko'k") || lv.includes('blue'))  return {c1:'#2980b9', c2:'#a29bfe'};
+  if(lv.includes('золот') || lv.includes('oltin') || lv.includes('gold')) return {c1:'#f39c12', c2:'#fff8d6'};
+  if(lv.includes('зелён') || lv.includes('yashil') || lv.includes('green')) return {c1:'#27ae60', c2:'#00c6b8'};
+  if(lv.includes('чёрн') || lv.includes('qora') || lv.includes('dark') || lv.includes('black')) return {c1:'#2d2060', c2:'#7c5cbf'};
+  return {c1:'#ff6eb4', c2:'#ffcc00'};
 }
 
-async function generate(){
-  const colorKey = ans[2]||'';
+/* ── Generate ──────────────────────────────────────── */
+async function generate() {
+  const colorKey = ans[2] || '';
   const colors = colorFromAnswer(colorKey);
-  const satName = ans[4] || 'Мой Спутник';
-
-  const prompt = `Ты — весёлый AI для детей 9–14 лет из Узбекистана. Ребёнок придумал спутник!
-Ответы:
-1. Миссия: ${ans[0]}
-2. Орбита: ${ans[1]}
-3. Цвет: ${ans[2]}
-4. Суперсила: ${ans[3]}
-5. Название придумал ребёнок: "${satName}"
-
-Верни ТОЛЬКО JSON без markdown:
-{
-  "name": "${satName}",
-  "type": "Тип миссии (2-3 слова)",
-  "description": "3 предложения для ребёнка — весело, с восклицаниями! Упомяни название спутника. Что делает и почему это круто.",
-  "orbit_height": "например 520 км",
-  "speed": "например 27 600 км/ч",
-  "weight": "например 120 кг",
-  "cameras": "например 3 HD-камеры",
-  "tags": ["тег1", "тег2", "тег3"],
-  "shape": "cube или small или cylinder или hex"
-}`;
+  const satName = ans[4] || 'My Satellite';
 
   try {
     const r = await fetch('/api/generate', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ answers: ans })
+      body: JSON.stringify({ answers: ans, lang: currentLang })
     });
-    if(!r.ok) throw new Error('server error ' + r.status);
+    if(!r.ok) throw new Error('server ' + r.status);
     const sat = await r.json();
     if(sat.error) throw new Error(sat.error);
     sat.name = satName;
@@ -381,38 +572,44 @@ async function generate(){
     showRes(sat);
   } catch(e) {
     console.error(e);
-    showFallback();
+    showFallback(colors, satName);
   }
 }
 
-function showRes(sat){
+function showRes(sat) {
   document.getElementById('sGen').classList.remove('active');
   document.getElementById('sRes').classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-  document.getElementById('satSvg').innerHTML=svgShape(sat.shape||'cube',sat.color1||'#7c5cbf',sat.color2||'#ffcc00');
-  document.getElementById('satName').textContent=sat.name;
-  document.getElementById('satType').textContent=sat.type;
-  document.getElementById('satDesc').textContent=sat.description;
-  document.getElementById('satSpecs').innerHTML=[
-    {l:'&#128640; Орбита',v:sat.orbit_height},
-    {l:'&#9889; Скорость',v:sat.speed},
-    {l:'&#9878; Масса',v:sat.weight},
-    {l:'&#128247; Камеры',v:sat.cameras}
-  ].map(s=>`<div class="spec"><div class="spec-lbl">${s.l}</div><div class="spec-val">${s.v}</div></div>`).join('');
-  const ts=['background:#ede8f8;color:#7c5cbf','background:#e0f9f7;color:#009e92','background:#fff8d6;color:#a07b00','background:#ffe8f5;color:#cc3d90'];
-  document.getElementById('satTags').innerHTML=(sat.tags||[]).map((t,i)=>`<span class="tag" style="${ts[i%4]}">&#127381; ${t}</span>`).join('');
+  window.scrollTo({top:0, behavior:'smooth'});
+  document.getElementById('satSvg').innerHTML = svgShape(sat.shape||'cube', sat.color1||'#7c5cbf', sat.color2||'#ffcc00');
+  document.getElementById('satName').textContent = sat.name;
+  document.getElementById('satType').textContent = sat.type;
+  document.getElementById('satDesc').textContent = sat.description;
+  const labels = T[currentLang].specLabels;
+  document.getElementById('satSpecs').innerHTML = [
+    {l:labels[0], v:sat.orbit_height},
+    {l:labels[1], v:sat.speed},
+    {l:labels[2], v:sat.weight},
+    {l:labels[3], v:sat.cameras}
+  ].map(s=>`<div class="spec"><div class="spec-lbl">${s.l}</div><div class="spec-val">${s.v||'—'}</div></div>`).join('');
+  const ts = ['background:#ede8f8;color:#7c5cbf','background:#e0f9f7;color:#009e92','background:#fff8d6;color:#a07b00','background:#ffe8f5;color:#cc3d90'];
+  document.getElementById('satTags').innerHTML = (sat.tags||[]).map((t,i)=>`<span class="tag" style="${ts[i%4]}">🏷 ${t}</span>`).join('');
 }
 
-function showFallback(){
+function showFallback(colors, satName) {
+  const t = T[currentLang];
   showRes({
-    name: ans[4]||'УзбекСат',
-    type:'Страж планеты',
-    description:'Твой спутник уже летит над Землёй на огромной скорости! Он выполняет свою миссию каждую секунду. Это настоящий космический герой — и ты его придумал!',
-    orbit_height:'520 км', speed:'27 600 км/ч', weight:'85 кг', cameras:'2 HD-камеры',
-    tags:['Узбекистан','Космос','Будущее'],
-    color1:'#7c5cbf', color2:'#ffcc00', shape:'cube'
+    name: satName,
+    type: currentLang==='ru' ? 'Страж планеты' : currentLang==='uz' ? "Sayyora qo'riqchisi" : 'Planet Guardian',
+    description: currentLang==='ru'
+      ? 'Твой спутник уже летит над Землёй на огромной скорости! Он выполняет свою миссию каждую секунду. Это настоящий космический герой — и ты его придумал!'
+      : currentLang==='uz'
+      ? "Sizning sun'iy yo'ldoshingiz Yer ustida katta tezlikda uchmoqda! U har soniyada o'z missiyasini bajarmoqda. Bu haqiqiy kosmik qahramon — va siz uni o'ylab topdingiz!"
+      : "Your satellite is already flying over Earth at incredible speed! It completes its mission every second. This is a true space hero — and you created it!",
+    orbit_height: '520 km', speed: '27 600 km/h', weight: '85 kg', cameras: '2 HD',
+    tags: currentLang==='ru' ? ['Узбекистан','Космос','Будущее'] : currentLang==='uz' ? ["O'zbekiston","Kosmos","Kelajak"] : ['Uzbekistan','Space','Future'],
+    color1: colors.c1, color2: colors.c2, shape: 'cube'
   });
-  document.getElementById('errBox').innerHTML='<div class="err-box">&#128268; Не удалось связаться с Uzcosmos. Попробуй ещё раз!</div>';
+  document.getElementById('errBox').innerHTML = `<div class="err-box">${t.err}</div>`;
 }
 </script>
 </body>

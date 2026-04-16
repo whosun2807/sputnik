@@ -43,27 +43,37 @@ class Handler(SimpleHTTPRequestHandler):
             return
 
         answers = payload.get("answers", {})
-        sat_name = answers.get('4', 'Мой Спутник')
+        lang = payload.get("lang", "ru")
+        sat_name = answers.get('4', 'My Satellite')
 
-        prompt = f"""Ты — весёлый AI для детей 9–14 лет из Узбекистана. Ребёнок придумал спутник!
-Ответы:
-1. Миссия: {answers.get('0', '?')}
-2. Орбита: {answers.get('1', '?')}
-3. Цвет: {answers.get('2', '?')}
-4. Суперсила: {answers.get('3', '?')}
-5. Название: {sat_name}
+        lang_instructions = {
+            "ru": "Отвечай ТОЛЬКО на русском языке. Используй весёлый стиль для детей.",
+            "uz": "Javobni FAQAT o'zbek tilida yoz. Bolalar uchun quvnoq uslubda yoz.",
+            "en": "Respond ONLY in English. Use a fun, exciting style for kids.",
+        }
+        lang_instr = lang_instructions.get(lang, lang_instructions["ru"])
 
-Верни ТОЛЬКО JSON без markdown и без лишних слов:
+        prompt = f"""You are a fun AI assistant for kids aged 9-14. A child has designed a satellite!
+Their choices:
+1. Mission: {answers.get('0', '?')}
+2. Orbit: {answers.get('1', '?')}
+3. Colour: {answers.get('2', '?')}
+4. Superpower: {answers.get('3', '?')}
+5. Name chosen by the child: "{sat_name}"
+
+{lang_instr}
+
+Return ONLY valid JSON, no markdown, no extra text:
 {{
   "name": "{sat_name}",
-  "type": "Тип миссии (2-3 слова)",
-  "description": "3 предложения для ребёнка — весело с восклицаниями! Упомяни название спутника.",
-  "orbit_height": "например 520 км",
-  "speed": "например 27 600 км/ч",
-  "weight": "например 120 кг",
-  "cameras": "например 3 HD-камеры",
-  "tags": ["тег1", "тег2", "тег3"],
-  "shape": "cube или small или cylinder или hex"
+  "type": "mission type (2-3 words)",
+  "description": "3 fun sentences for a child — exciting, with exclamations! Mention the satellite name.",
+  "orbit_height": "e.g. 520 km",
+  "speed": "e.g. 27 600 km/h",
+  "weight": "e.g. 120 kg",
+  "cameras": "e.g. 3 HD cameras",
+  "tags": ["tag1", "tag2", "tag3"],
+  "shape": "cube or small or cylinder or hex"
 }}"""
 
         request_data = json.dumps({
