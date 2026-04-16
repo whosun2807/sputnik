@@ -77,7 +77,7 @@ Return ONLY valid JSON, no markdown, no extra text:
 }}"""
 
         request_data = json.dumps({
-            "model": "claude-3-5-haiku-20241022",
+            "model": "claude-3-haiku-20240307",
             "max_tokens": 1000,
             "messages": [{"role": "user", "content": prompt}]
         }).encode("utf-8")
