@@ -67,7 +67,7 @@ class Handler(SimpleHTTPRequestHandler):
 }}"""
 
         request_data = json.dumps({
-            "model": "claude-haiku-4-5-20251001",
+            "model": "claude-3-5-haiku-20241022",
             "max_tokens": 1000,
             "messages": [{"role": "user", "content": prompt}]
         }).encode("utf-8")
@@ -85,19 +85,28 @@ class Handler(SimpleHTTPRequestHandler):
 
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
-                result = json.loads(resp.read().decode("utf-8"))
+                raw = resp.read().decode("utf-8")
+                result = json.loads(raw)
                 text = "".join(
                     block.get("text", "")
                     for block in result.get("content", [])
                     if block.get("type") == "text"
                 )
+                # Strip markdown code fences
                 text = text.replace("```json", "").replace("```", "").strip()
+                if not text:
+                    print(f"Empty text from Claude. Raw: {raw[:500]}")
+                    self._json(500, {"error": "Пустой ответ от Claude"})
+                    return
                 satellite = json.loads(text)
                 self._json(200, satellite)
         except urllib.error.HTTPError as e:
             err = e.read().decode("utf-8")
             print(f"Anthropic error {e.code}: {err}")
             self._json(500, {"error": f"Ошибка Anthropic: {e.code}"})
+        except json.JSONDecodeError as e:
+            print(f"JSON parse error: {e} | text: {text[:300]}")
+            self._json(500, {"error": f"Ошибка парсинга JSON: {e}"})
         except Exception as e:
             print(f"Ошибка: {e}")
             self._json(500, {"error": str(e)})
