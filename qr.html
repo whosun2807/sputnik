@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR — Построй свой спутник!</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --purple: #7c5cbf;
+  --purple-light: #ede8f8;
+  --teal: #00c6b8;
+  --bg: #eef4ff;
+  --text: #2d2060;
+  --uz-blue: #0d2a6e;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Floating blobs */
+.blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; opacity: 0.15; animation: blobF 8s ease-in-out infinite; }
+.blob1 { width: 340px; height: 340px; background: #a78bfa; top: -100px; right: -100px; }
+.blob2 { width: 260px; height: 260px; background: #f472b6; bottom: -60px; left: -60px; animation-delay: 3s; }
+.blob3 { width: 180px; height: 180px; background: #34d399; top: 50%; right: -40px; animation-delay: 5s; }
+@keyframes blobF { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-20px) scale(1.05)} }
+
+/* Stars */
+.stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.star { position: absolute; animation: starA 6s linear infinite; opacity: 0.5; }
+@keyframes starA { 0%{transform:scale(1) rotate(0);opacity:0.3} 50%{transform:scale(1.3) rotate(180deg);opacity:0.7} 100%{transform:scale(1) rotate(360deg);opacity:0.3} }
+
+/* Main card */
+.card {
+  position: relative; z-index: 1;
+  background: white;
+  border-radius: 32px;
+  padding: 3rem 3.5rem;
+  box-shadow: 0 8px 48px rgba(124,92,191,0.18), 0 2px 12px rgba(0,0,0,0.06);
+  text-align: center;
+  max-width: 560px;
+  width: 100%;
+}
+
+/* Logo */
+.logo-wrap { margin-bottom: 1.5rem; }
+.logo-wrap img { height: 54px; width: auto; }
+
+/* Title */
+.title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 0.4rem;
+}
+.title em { color: var(--purple); font-style: normal; }
+
+.subtitle {
+  font-size: 1rem;
+  color: #7a6fa8;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+.subtitle strong { color: var(--uz-blue); }
+
+/* QR frame */
+.qr-frame {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  border-radius: 20px;
+  background: white;
+  border: 3px solid var(--purple-light);
+  box-shadow: 0 4px 24px rgba(124,92,191,0.12);
+  margin-bottom: 1.75rem;
+}
+#qrCanvas { display: block; border-radius: 8px; }
+
+/* URL pill */
+.url-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--purple-light);
+  color: var(--purple);
+  padding: 0.55rem 1.25rem;
+  border-radius: 99px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  word-break: break-all;
+}
+.url-pill span { font-size: 1.1rem; }
+
+/* Steps */
+.steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 110px;
+}
+.step-ico {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: var(--purple-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+}
+.step-txt {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.3;
+}
+.step-arrow { font-size: 1.3rem; color: #ccc; margin-top: 14px; flex-shrink: 0; }
+
+/* Age badge */
+.age-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e0f9f7;
+  color: #008b84;
+  padding: 0.38rem 1rem;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+/* Footer */
+.footer-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0.55;
+  margin-top: 0.5rem;
+}
+.footer-line img { height: 18px; }
+.footer-line span { font-size: 0.75rem; font-weight: 800; color: var(--uz-blue); }
+
+/* Print styles */
+@media print {
+  body { background: white; padding: 0; }
+  .blob, .stars { display: none; }
+  .card { box-shadow: none; border: 2px solid #e0e0f0; max-width: 100%; }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .card { padding: 2rem 1.5rem; border-radius: 20px; }
+  .title { font-size: 1.7rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+<div class="stars" id="starsWrap"></div>
+
+<div class="card">
+
+  <div class="logo-wrap">
+    <img src="Logo.png" alt="Uzcosmos" onerror="this.style.display='none'">
+  </div>
+
+  <div class="title">Построй свой<br><em>спутник!</em></div>
+  <div class="subtitle">Ответь на 5 вопросов — <strong>Uzcosmos</strong> создаст твой спутник</div>
+
+  <div class="age-badge">🚀 Для детей 9–14 лет</div>
+
+  <div class="qr-frame">
+    <canvas id="qrCanvas"></canvas>
+  </div>
+
+  <div>
+    <div class="url-pill"><span>🔗</span> sputnik-production.up.railway.app</div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-ico">📱</div>
+      <div class="step-txt">Наведи камеру на QR</div>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-ico">🛸</div>
+      <div class="step-txt">Ответь на 5 вопросов</div>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-ico">🌟</div>
+      <div class="step-txt">Получи свой спутник!</div>
+    </div>
+  </div>
+
+  <div class="footer-line">
+    <img src="Logo.png" alt="Uzcosmos" onerror="this.style.display='none'">
+    <span>Uzcosmos Space Agency</span>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+// Animated stars
+(function(){
+  const w = document.getElementById('starsWrap');
+  const em = ['⭐','✨','🌟','★','💫'];
+  for(let i = 0; i < 16; i++){
+    const s = document.createElement('span');
+    s.className = 'star';
+    s.innerHTML = em[i % em.length];
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${4+Math.random()*4}s;font-size:${12+Math.random()*14}px`;
+    w.appendChild(s);
+  }
+})();
+
+// Generate QR code
+const GAME_URL = 'https://sputnik-production.up.railway.app/';
+const canvas = document.getElementById('qrCanvas');
+
+QRCode.toCanvas(canvas, GAME_URL, {
+  width: 260,
+  margin: 1,
+  color: {
+    dark: '#2d2060',
+    light: '#ffffff'
+  },
+  errorCorrectionLevel: 'H'
+}, function(err){
+  if(err) console.error('QR error:', err);
+});
+</script>
+</body>
+</html>

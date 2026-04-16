@@ -1,8 +1,15 @@
 import os
+import sys
 import json
 import urllib.request
 import urllib.error
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+
+# Fix Windows console encoding
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+if sys.stderr.encoding != 'utf-8':
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
