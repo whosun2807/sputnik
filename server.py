@@ -87,26 +87,37 @@ class Handler(SimpleHTTPRequestHandler):
             with urllib.request.urlopen(req, timeout=30) as resp:
                 raw = resp.read().decode("utf-8")
                 result = json.loads(raw)
+                print(f"Claude response type={result.get('type')} stop_reason={result.get('stop_reason')}")
+
+                # Check for API-level error in response body
+                if result.get("type") == "error":
+                    err_msg = result.get("error", {}).get("message", "unknown")
+                    print(f"API error in body: {err_msg}")
+                    self._json(500, {"error": f"Claude: {err_msg}"})
+                    return
+
                 text = "".join(
                     block.get("text", "")
                     for block in result.get("content", [])
                     if block.get("type") == "text"
                 )
-                # Strip markdown code fences
                 text = text.replace("```json", "").replace("```", "").strip()
+
                 if not text:
-                    print(f"Empty text from Claude. Raw: {raw[:500]}")
+                    print(f"Empty text. Full raw: {raw[:800]}")
                     self._json(500, {"error": "Пустой ответ от Claude"})
                     return
+
                 satellite = json.loads(text)
                 self._json(200, satellite)
+
         except urllib.error.HTTPError as e:
             err = e.read().decode("utf-8")
-            print(f"Anthropic error {e.code}: {err}")
-            self._json(500, {"error": f"Ошибка Anthropic: {e.code}"})
+            print(f"Anthropic HTTP error {e.code}: {err}")
+            self._json(500, {"error": f"Ошибка Anthropic: {e.code} — {err[:200]}"})
         except json.JSONDecodeError as e:
-            print(f"JSON parse error: {e} | text: {text[:300]}")
-            self._json(500, {"error": f"Ошибка парсинга JSON: {e}"})
+            print(f"JSON parse error: {e}")
+            self._json(500, {"error": f"Ошибка парсинга: {e}"})
         except Exception as e:
             print(f"Ошибка: {e}")
             self._json(500, {"error": str(e)})
