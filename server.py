@@ -13,6 +13,7 @@ if sys.stderr.encoding != 'utf-8':
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
+ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-3-haiku-20240307")
 PORT = int(os.environ.get("PORT", 8080))
 
 
@@ -77,7 +78,7 @@ Return ONLY valid JSON, no markdown, no extra text:
 }}"""
 
         request_data = json.dumps({
-            "model": "claude-3-haiku-20240307",
+            "model": ANTHROPIC_MODEL,
             "max_tokens": 1000,
             "messages": [{"role": "user", "content": prompt}]
         }).encode("utf-8")
